@@ -137,6 +137,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+mini-rag-env/
 
 # Spyder project settings
 .spyderproject
