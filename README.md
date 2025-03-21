@@ -52,3 +52,6 @@ Once activated, your terminal prompt should show (<virtual_env_name>).
   ``` 
   * Set your missing environment variables in the `.env` file.
 
+## POSTMAN Collection
+
+Download the POSTMAN collection from [/assets/mini-rag-app.postman_collection.json](/assets/mini-rag-app.postman_collection.json)
