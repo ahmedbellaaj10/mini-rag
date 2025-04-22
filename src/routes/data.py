@@ -3,8 +3,10 @@ from fastapi.responses import JSONResponse
 from helpers.config import Settings, get_settings
 from controllers import DataController, ProjectController
 from models import ResponseSignal
-# import os
 import aiofiles
+import logging
+
+logger = logging.getLogger('uvicorn.error')
 
 data_router = APIRouter(
     prefix="/api/v1/data",
@@ -29,9 +31,16 @@ async def upload_data(project_id: str, file: UploadFile, app_settings: Settings 
         project_id=project_id
     )
     
-    async with aiofiles.open(file_path, 'wb') as f:
-        while chunk := await file.read(app_settings.FILE_DEFAULT_CHUNK_SIZE):
-            await f.write(chunk)
+    try :
+        async with aiofiles.open(file_path, 'wb') as f:
+            while chunk := await file.read(app_settings.FILE_DEFAULT_CHUNK_SIZE):
+                await f.write(chunk)
+    except Exception as e:
+        logger.error(f"Failed to upload file: {e}")
+        return JSONResponse(
+            content={"signal": ResponseSignal.FILE_UPLOAD_FAILED.value},
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
 
     return JSONResponse(
         content={"signal": ResponseSignal.FILE_UPLOAD_SUCCESS.value},  
