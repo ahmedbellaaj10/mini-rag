@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from helpers.config import Settings, get_settings
 from controllers import DataController, ProjectController
 from models import ResponseSignal
-import os
+# import os
 import aiofiles
 
 data_router = APIRouter(
@@ -23,8 +23,11 @@ async def upload_data(project_id: str, file: UploadFile, app_settings: Settings 
             status_code=status.HTTP_400_BAD_REQUEST,
         )
     
-    project_dir_path = ProjectController().get_project_path(project_id=project_id)
-    file_path = os.path.join(project_dir_path, file.filename)
+    # project_dir_path = ProjectController().get_project_path(project_id=project_id)
+    file_path = DataController().generate_unique_filename(
+        original_filename=file.filename,
+        project_id=project_id
+    )
     
     async with aiofiles.open(file_path, 'wb') as f:
         while chunk := await file.read(app_settings.FILE_DEFAULT_CHUNK_SIZE):
