@@ -38,8 +38,6 @@ class ProcessController(BaseController):
             length_function=len,
         )
 
-        print(f"File content texts: {file_content}")
-
         file_content_texts = [
             rec.page_content
             for rec in file_content

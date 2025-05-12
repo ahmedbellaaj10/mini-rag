@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from routes import base
 from routes import data
 
-from motor.asyncio import AsyncIOMotorClient
+from motor.motor_asyncio import AsyncIOMotorClient
 
 from helpers.config import get_settings
 
@@ -23,4 +23,3 @@ async def shutdown_db_client():
 
 app.include_router(base.base_router)
 app.include_router(data.data_router)
-
