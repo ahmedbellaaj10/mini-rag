@@ -42,7 +42,7 @@ Once activated, your terminal prompt should show (<virtual_env_name>).
 
 ### 4. Install Project Dependencies
   ```bash
-  pip install -r requirements.txt
+  pip install -r src/requirements.txt
   ```
 
 ### 6. Setup the environments variables
@@ -54,4 +54,4 @@ Once activated, your terminal prompt should show (<virtual_env_name>).
 
 ## POSTMAN Collection
 
-Download the POSTMAN collection from [/assets/mini-rag-app.postman_collection.json](/assets/mini-rag-app.postman_collection.json)
+Download the POSTMAN collection from [/src/assets/mini-rag-app.postman_collection.json](/assets/mini-rag-app.postman_collection.json)
