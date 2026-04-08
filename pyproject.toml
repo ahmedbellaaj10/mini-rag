@@ -3,8 +3,16 @@ name = "mini-rag"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-author = [
+authors = [
     { name = "Ahmed Belaaj", email = "ahmed-bellaaj@outlook.com"}
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+]
+
+[dependency-groups]
+dev = [
+    "commitizen>=4.13.9",
+    "pre-commit>=4.5.1",
+    "ruff>=0.15.9",
+]
