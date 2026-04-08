@@ -33,7 +33,7 @@ pip install uv
 ### 3. Set up the project environment
 
 ```bash
-uv sync --all_groups
+uv sync --all-groups
 ```
 
 This will create a virtual environment and install all dependencies (including dev tools) using the pinned versions from `uv.lock`.
