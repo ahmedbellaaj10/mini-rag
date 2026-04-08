@@ -1,0 +1,10 @@
+[project]
+name = "mini-rag"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+author = [
+    { name = "Ahmed Belaaj", email = "ahmed-bellaaj@outlook.com"}
+]
+requires-python = ">=3.13"
+dependencies = []
