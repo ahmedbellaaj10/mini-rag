@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 
+from routes import base
+from dotenv import load_dotenv
+
+load_dotenv()
+
 app: FastAPI = FastAPI()
 
-
-@app.get("/welcome")
-async def read_root() -> dict[str, str]:
-    return {"message": "Welcome to mini-RAG!"}
+app.include_router(base.base_router)
