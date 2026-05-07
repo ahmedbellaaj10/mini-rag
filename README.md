@@ -122,4 +122,4 @@ uv run ruff format .
 
 
 ## Postman Collection:
-You can find the POSTMAN collection in [/assets/mini-rag-app.postman_collection.json](assets folder)
+You can find the Postman collection in [assets/mini-rag-app.postman_collection.json](assets/mini-rag-app.postman_collection.json)
