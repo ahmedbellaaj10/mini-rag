@@ -38,6 +38,14 @@ uv sync --all-groups
 
 This will create a virtual environment and install all dependencies (including dev tools) using the pinned versions from `uv.lock`.
 
+### 4. Create `.env` file
+
+```bash
+cp .env.example .env
+```
+
+### 5. Setup your environment variables in your `.env` file
+
 ---
 
 ## Tooling
