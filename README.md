@@ -119,3 +119,7 @@ uv run ruff format .
 ## License
 
 [Apache License 2.0](LICENSE)
+
+
+## Postman Collection:
+You can find the POSTMAN collection in [/assets/mini-rag-app.postman_collection.json](assets folder)
