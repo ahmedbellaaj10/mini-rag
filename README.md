@@ -38,6 +38,20 @@ uv sync --all-groups
 
 This will create a virtual environment and install all dependencies (including dev tools) using the pinned versions from `uv.lock`.
 
+### 4. Create `.env` file
+
+```bash
+cp .env.example .env
+```
+
+### 5. Setup your environment variables in your `.env` file
+
+### 6. Run the FastAPI server
+
+```bash
+uv run uvicorn main:app --reload
+```
+
 ---
 
 ## Tooling
@@ -105,3 +119,7 @@ uv run ruff format .
 ## License
 
 [Apache License 2.0](LICENSE)
+
+
+## Postman Collection:
+You can find the Postman collection in [assets/mini-rag-app.postman_collection.json](assets/mini-rag-app.postman_collection.json)
