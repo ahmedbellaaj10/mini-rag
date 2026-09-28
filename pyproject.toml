@@ -17,6 +17,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "commitizen>=4.13.9",
+    "mypy>=2.3.1",
     "pre-commit>=4.5.1",
     "ruff>=0.15.9",
 ]
@@ -33,3 +34,8 @@ packages = [
 
 [tool.hatch.build.targets.wheel.sources]
 "src" = ""
+
+
+[tool.mypy]
+mypy_path = "src"
+explicit_package_bases = true
