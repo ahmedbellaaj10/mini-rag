@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from pathlib import Path
 
 from config.config import Settings, get_settings
-from controllers import DataController, ProjectController
+from controllers import DataController
 
 data_router: APIRouter = APIRouter(
     prefix="/api/v1/data",
@@ -17,8 +17,10 @@ data_router: APIRouter = APIRouter(
 async def upload_data(
     project_id: str, file: UploadFile, app_settings: Settings = Depends(get_settings)
 ):
+
+    data_controller = DataController()
     # validate file properties
-    is_valid_file, result_message = DataController().validate_uploaded_file(file)
+    is_valid_file, result_message = data_controller.validate_uploaded_file(file)
 
     if not is_valid_file:
         return JSONResponse(
@@ -40,8 +42,9 @@ async def upload_data(
             },
         )
 
-    project_dir_path: Path = ProjectController().get_project_path(project_id)
-    file_path: Path = project_dir_path / file.filename
+    file_path: Path = data_controller.generate_unique_filename(
+        file.filename, project_id
+    )
 
     async with aiofiles.open(file_path, "wb") as f:
         while chunk := await file.read(
