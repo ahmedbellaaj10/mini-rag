@@ -30,6 +30,16 @@ async def upload_data(
             },
         )
 
+    if file.filename is None:
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "is_valid_file": False,
+                "project_id": project_id,
+                "message": "File name is missing",
+            },
+        )
+
     project_dir_path: Path = ProjectController().get_project_path(project_id)
     file_path: Path = project_dir_path / file.filename
 

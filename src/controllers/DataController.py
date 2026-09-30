@@ -14,6 +14,9 @@ class DataController(BaseController):
         if file is None or file.size is None:
             return False, ResponseSignal.FILE_INVALID.value
 
+        if file.filename is None or file.filename.strip() == "":
+            return False, ResponseSignal.FILE_NAME_INVALID.value
+
         if file.content_type not in self.settings.FILE_ALLOWED_TYPES:
             return False, ResponseSignal.FILE_TYPE_NOT_SUPPORTED.value
 
