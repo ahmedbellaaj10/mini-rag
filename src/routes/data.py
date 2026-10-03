@@ -3,7 +3,6 @@ import logging
 
 from fastapi import APIRouter, Depends, UploadFile, status
 from fastapi.responses import JSONResponse
-from pathlib import Path
 
 from config.config import Settings, get_settings
 from controllers import DataController
@@ -46,7 +45,7 @@ async def upload_data(
             },
         )
 
-    file_path: Path = data_controller.generate_unique_filename(
+    file_path, file_id = data_controller.generate_unique_filepath(
         file.filename, project_id
     )
 
@@ -63,6 +62,7 @@ async def upload_data(
                 "is_valid_file": is_valid_file,
                 "project_id": project_id,
                 "message": result_message,
+                "file_id": file_id,
             },
         )
     except Exception as e:

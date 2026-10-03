@@ -29,18 +29,22 @@ class DataController(BaseController):
 
         return True, ResponseSignal.FILE_VALID.value
 
-    def generate_unique_filename(self, original_filename: str, project_id: str) -> Path:
+    def generate_unique_filepath(
+        self, original_filename: str, project_id: str
+    ) -> tuple[Path, str]:
         project_dir_path = ProjectController().get_project_path(project_id)
         random_key: str = super().generate_random_string()
         cleaned_filename: str = self.get_clean_filename(original_filename)
+        saved_filename: str = f"{random_key}_{cleaned_filename}"
 
-        new_filename: Path = project_dir_path / f"{random_key}_{cleaned_filename}"
+        new_filepath: Path = project_dir_path / saved_filename
 
-        while new_filename.exists():
+        while new_filepath.exists():
             random_key = super().generate_random_string()
-            new_filename = project_dir_path / f"{random_key}_{cleaned_filename}"
+            saved_filename = f"{random_key}_{cleaned_filename}"
+            new_filepath = project_dir_path / saved_filename
 
-        return new_filename
+        return new_filepath, saved_filename
 
     def get_clean_filename(self, origin_filename: str) -> str:
 
