@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, UploadFile, status
 from fastapi.responses import JSONResponse
 
 from config.config import Settings, get_settings
-from controllers import DataController
+from controllers import DataController, ProcessFileController
 from models import ResponseSignal
 from schemes import ProcessFileRequest
 
@@ -20,7 +20,7 @@ data_router: APIRouter = APIRouter(
 @data_router.post("/upload/{project_id}")
 async def upload_data(
     project_id: str, file: UploadFile, app_settings: Settings = Depends(get_settings)
-):
+) -> JSONResponse:
 
     data_controller = DataController()
     # validate file properties
@@ -79,7 +79,29 @@ async def upload_data(
 
 
 @data_router.post("/process/{project_id}")
-async def process_file(project_id: str, request: ProcessFileRequest) -> str:
+async def process_file(project_id: str, request: ProcessFileRequest) -> JSONResponse:
     file_id = request.file_id
+    process_file_controller = ProcessFileController(project_id)
+    file_content = process_file_controller.get_file_content(file_id)
+    file_chunks = process_file_controller.process_file_content(
+        file_content, chunk_size=request.chunk_size, overlap_size=request.overlap_size
+    )
 
-    return file_id
+    if file_chunks is None or len(file_chunks) == 0:
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "project_id": project_id,
+                "file_id": file_id,
+                "message": ResponseSignal.FILE_PROCESSING_FAILED.value,
+            },
+        )
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={
+            "project_id": project_id,
+            "file_id": file_id,
+            "message": ResponseSignal.FILE_PROCESSING_SUCCESS.value,
+        },
+    )
