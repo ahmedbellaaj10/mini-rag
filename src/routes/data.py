@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from config.config import Settings, get_settings
 from controllers import DataController
 from models import ResponseSignal
+from schemes import ProcessFileRequest
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -75,3 +76,10 @@ async def upload_data(
                 "message": ResponseSignal.FILE_UPLOAD_FAILED.value,
             },
         )
+
+
+@data_router.post("/process/{project_id}")
+async def process_file(project_id: str, request: ProcessFileRequest) -> str:
+    file_id = request.file_id
+
+    return file_id
