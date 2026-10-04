@@ -8,7 +8,7 @@ class DataChunk(BaseModel):
     chunk_text: str = Field(..., min_length=1)
     chunk_metadata: dict
     chunk_order: int = Field(..., gt=0)
-    chunk_project_id: ObjectId = Field(..., min_length=1)
+    chunk_project_id: ObjectId = Field(...)
 
     class Config:
         arbitrary_types_allowed = True
