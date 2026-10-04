@@ -119,6 +119,9 @@ async def process_file(
             },
         )
 
+    if file_processing.do_reset:
+        await chunk_model.delete_chunks_by_project_id(ObjectId(project.id))
+
     file_chunks_records = [
         DataChunk(
             chunk_text=chunk.page_content,
