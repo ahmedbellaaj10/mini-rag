@@ -29,7 +29,9 @@ async def upload_data(
     app_settings: Settings = Depends(get_settings),
 ) -> JSONResponse:
 
-    project_model: ProjectModel = ProjectModel(db_client=request.app.state.db)
+    project_model: ProjectModel = await ProjectModel.create_instance(
+        db_client=request.app.state.db
+    )
 
     _ = await project_model.get_project_or_create_one(project_id)
 
@@ -103,11 +105,15 @@ async def process_file(
         overlap_size=file_processing.overlap_size,
     )
 
-    project_model: ProjectModel = ProjectModel(db_client=request.app.state.db)
+    project_model: ProjectModel = await ProjectModel.create_instance(
+        db_client=request.app.state.db
+    )
 
     project = await project_model.get_project_or_create_one(project_id)
 
-    chunk_model: ChunkModel = ChunkModel(db_client=request.app.state.db)
+    chunk_model: ChunkModel = await ChunkModel.create_instance(
+        db_client=request.app.state.db
+    )
 
     if file_chunks is None or len(file_chunks) == 0:
         return JSONResponse(
