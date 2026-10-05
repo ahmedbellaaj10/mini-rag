@@ -47,7 +47,7 @@ async def upload_data(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={
                 "is_valid_file": is_valid_file,
-                "project_id": project.id,
+                "project_id": str(project.id),
                 "message": result_message,
             },
         )
