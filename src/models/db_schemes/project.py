@@ -14,3 +14,13 @@ class Project(BaseModel):
         return value
 
     model_config = ConfigDict(arbitrary_types_allowed=True, populate_by_name=True)
+
+    @classmethod
+    def get_indexes(cls) -> list[dict]:
+        return [
+            {
+                "key": [("project_id", 1)],
+                "name": "project_id_index",
+                "unique": True,
+            }
+        ]

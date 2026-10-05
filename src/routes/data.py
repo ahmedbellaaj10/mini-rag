@@ -1,5 +1,6 @@
 import aiofiles
 import logging
+import os
 
 from bson import ObjectId
 from fastapi import APIRouter, Depends, UploadFile, status, Request
@@ -11,7 +12,9 @@ from models import ResponseSignal
 from schemes import ProcessFileRequest
 from models.ProjectModel import ProjectModel
 from models.ChunkModel import ChunkModel
-from models.db_schemes import DataChunk
+from models.AssetModel import AssetModel
+from models.db_schemes import DataChunk, Asset
+from models.enums.AssetTypeEnums import AssetTypeEnum
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -29,9 +32,11 @@ async def upload_data(
     app_settings: Settings = Depends(get_settings),
 ) -> JSONResponse:
 
-    project_model: ProjectModel = ProjectModel(db_client=request.app.state.db)
+    project_model: ProjectModel = await ProjectModel.create_instance(
+        db_client=request.app.state.db
+    )
 
-    _ = await project_model.get_project_or_create_one(project_id)
+    project = await project_model.get_project_or_create_one(project_id)
 
     data_controller = DataController()
     # validate file properties
@@ -42,7 +47,7 @@ async def upload_data(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={
                 "is_valid_file": is_valid_file,
-                "project_id": project_id,
+                "project_id": str(project.id),
                 "message": result_message,
             },
         )
@@ -52,7 +57,7 @@ async def upload_data(
             status_code=status.HTTP_400_BAD_REQUEST,
             content={
                 "is_valid_file": False,
-                "project_id": project_id,
+                "project_id": project.id,
                 "message": "File name is missing",
             },
         )
@@ -68,6 +73,21 @@ async def upload_data(
             ):
                 await f.write(chunk)
 
+        # store asset (files for now) in the db
+        asset_model: AssetModel = await AssetModel.create_instance(
+            db_client=request.app.state.db
+        )
+
+        assert isinstance(project.id, ObjectId), "Project ID must be an ObjectId"
+
+        asset = Asset(
+            asset_project_id=project.id,
+            asset_type=AssetTypeEnum.FILE.value,
+            asset_name=file_id,
+            asset_size=os.path.getsize(file_path),
+        )
+        await asset_model.create_asset(asset)
+
         return JSONResponse(
             status_code=status.HTTP_200_OK,
             content={
@@ -82,7 +102,7 @@ async def upload_data(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             content={
                 "is_valid_file": False,
-                "project_id": project_id,
+                "project_id": project.id,
                 "message": ResponseSignal.FILE_UPLOAD_FAILED.value,
             },
         )
@@ -103,11 +123,15 @@ async def process_file(
         overlap_size=file_processing.overlap_size,
     )
 
-    project_model: ProjectModel = ProjectModel(db_client=request.app.state.db)
+    project_model: ProjectModel = await ProjectModel.create_instance(
+        db_client=request.app.state.db
+    )
 
     project = await project_model.get_project_or_create_one(project_id)
 
-    chunk_model: ChunkModel = ChunkModel(db_client=request.app.state.db)
+    chunk_model: ChunkModel = await ChunkModel.create_instance(
+        db_client=request.app.state.db
+    )
 
     if file_chunks is None or len(file_chunks) == 0:
         return JSONResponse(
