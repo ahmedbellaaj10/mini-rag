@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 
 class ProcessFileRequest(BaseModel):
-    file_id: str = Field(..., description="The ID of the file.")
+    file_id: Optional[str] = Field(None, description="The ID of the file.")
     chunk_size: Optional[int] = Field(
         100, description="The size of the chunk to read from the file."
     )

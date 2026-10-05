@@ -1,5 +1,6 @@
 import os
 from typing import Optional
+from pathlib import Path
 
 from langchain_community.document_loaders import TextLoader, PyMuPDFLoader
 from langchain_core.document_loaders import BaseLoader
@@ -21,17 +22,22 @@ class ProcessFileController(BaseController):
     def get_file_extension(self, file_id: str) -> str:
         return os.path.splitext(file_id)[-1]
 
-    def get_file_loader(self, file_id: str) -> BaseLoader:
+    def get_file_loader(self, file_id: str) -> Optional[BaseLoader]:
         file_extension = self.get_file_extension(file_id)
+        file_path: Path = self.project_path / f"{file_id}"
+        if not file_path.exists():
+            return None
         if file_extension == LoadingEnums.TXT.value:
-            return TextLoader(self.project_path / f"{file_id}", encoding="utf-8")
+            return TextLoader(file_path, encoding="utf-8")
         elif file_extension == LoadingEnums.PDF.value:
-            return PyMuPDFLoader(self.project_path / f"{file_id}")
+            return PyMuPDFLoader(file_path)
         else:
             raise ValueError(f"Unsupported file type: {file_extension}")
 
-    def get_file_content(self, file_id: str) -> list[Document]:
+    def get_file_content(self, file_id: str) -> Optional[list[Document]]:
         loader = self.get_file_loader(file_id)
+        if not loader:
+            return None
         content = loader.load()
         return content
 
