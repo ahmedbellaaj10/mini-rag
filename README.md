@@ -46,7 +46,14 @@ cp .env.example .env
 
 ### 5. Setup your environment variables in your `.env` file
 
-### 6. Run the FastAPI server
+### 6. Run Docker compose services
+
+```bash
+$ cd docker
+$ cp .env.example .env
+```
+
+### 7. Run the FastAPI server
 
 ```bash
 uv run uvicorn main:app --reload
