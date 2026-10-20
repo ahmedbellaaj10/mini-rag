@@ -1,8 +1,9 @@
+from typing import Optional
+from bson import ObjectId
+
 from .BaseDataModel import BaseDataModel
 from .db_schemes import Asset
 from .enums.DatabaseEnums import DatabaseEnum
-
-from bson import ObjectId
 
 
 class AssetModel(BaseDataModel):
@@ -46,3 +47,18 @@ class AssetModel(BaseDataModel):
             }
         ).to_list(length=None)
         return [Asset(**asset) for asset in assets]
+
+    async def get_asset_record(
+        self, asset_project_id: str, asset_name: str
+    ) -> Optional[Asset]:
+        asset = await self.collection.find_one(
+            {
+                "asset_project_id": ObjectId(asset_project_id)
+                if isinstance(asset_project_id, str)
+                else asset_project_id,
+                "asset_name": asset_name,
+            }
+        )
+        if asset:
+            return Asset(**asset)
+        return None
