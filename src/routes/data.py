@@ -125,19 +125,34 @@ async def process_files(
     )
 
     process_file_controller = ProcessFileController(project_id)
-    project_files_ids: list[str] = []
+    project_files_ids: dict = {}
+
+    asset_model: AssetModel = await AssetModel.create_instance(
+        db_client=request.app.state.db
+    )
 
     if file_processing.file_id:
-        project_files_ids = [file_processing.file_id]
-    else:
-        asset_model: AssetModel = await AssetModel.create_instance(
-            db_client=request.app.state.db
+        asset = await asset_model.get_asset_record(
+            asset_project_id=str(project.id),
+            asset_name=file_processing.file_id,
         )
+        if asset is None:
+            return JSONResponse(
+                status_code=status.HTTP_404_NOT_FOUND,
+                content={
+                    "project_id": project_id,
+                    "file_id": file_processing.file_id,
+                    "message": ResponseSignal.NO_FILES_FOUND.value,
+                },
+            )
+        assert asset.id is not None
+        project_files_ids = {asset.id: asset.asset_name}
+    else:
         project_files: list[Asset] = await asset_model.get_all_project_assets(
             asset_project_id=str(project.id),
             asset_type=AssetTypeEnum.FILE.value,
         )
-        project_files_ids = [file.asset_name for file in project_files]
+        project_files_ids = {file.id: file.asset_name for file in project_files}
 
     if len(project_files_ids) == 0:
         return JSONResponse(
@@ -152,7 +167,7 @@ async def process_files(
     if file_processing.do_reset:
         await chunk_model.delete_chunks_by_project_id(ObjectId(project.id))
 
-    for file_id in project_files_ids:
+    for asset_id, file_id in project_files_ids.items():
         file_content = process_file_controller.get_file_content(file_id)
         if file_content is None:
             logger.error(
@@ -182,6 +197,7 @@ async def process_files(
                 chunk_metadata=chunk.metadata,
                 chunk_order=index + 1,
                 chunk_project_id=ObjectId(project.id),
+                chunk_asset_id=asset_id,
             )
             for index, chunk in enumerate(file_chunks)
         ]
