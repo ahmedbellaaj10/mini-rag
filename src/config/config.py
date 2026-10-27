@@ -14,6 +14,22 @@ class Settings(BaseSettings):
     MONGODB_URL: str
     MONGODB_DB_NAME: str
 
+    GENERATION_BACKEND: str
+    EMBEDDING_BACKEND: str
+
+    OPENAI_API_KEY: str
+    COHERE_API_KEY: str
+
+    OPENAI_API_BASE_URL: str
+
+    LLM_ID: str
+    EMBEDDING_MODEL_ID: str
+    EMBEDDING_MODEL_SIZE: int
+
+    DEFAULT_MAX_INPUT_CARACTERS: int
+    DEFAULT_OUTPUT_MAX_TOKENS: int
+    DEFAULT_TEMPERATURE: float
+
     model_config = SettingsConfigDict(env_file=ENV_FILE)
 
 
