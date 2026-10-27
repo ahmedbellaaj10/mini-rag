@@ -2,7 +2,7 @@ from typing import Optional
 import logging
 from openai import OpenAI
 from ..LLMInterface import LLMInterface
-from ..LLMEnums import OpenAIEnums
+from ..LLMEnums import OpenAIRolesEnums
 
 
 class OpenAIProvider(LLMInterface):
@@ -58,7 +58,7 @@ class OpenAIProvider(LLMInterface):
             temperature if temperature is not None else self.default_temperature
         )
 
-        chat_history.append(self.construct_prompt(prompt, OpenAIEnums.USER.value))
+        chat_history.append(self.construct_prompt(prompt, OpenAIRolesEnums.USER.value))
 
         response = self.client.chat.completions.create(
             model=self.llm_id,
